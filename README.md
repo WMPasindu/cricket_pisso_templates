@@ -6,17 +6,11 @@ Open `index.html` in a browser, pick a post type, upload a photo, fill in the de
 
 ## Post types
 
-- Player figures
-- Match day
-- Player analysis
-- Ground analysis
-- Last match result
-- Captain's call (bat or bowl poll)
-- Toss prediction
-- Wicket alert
-- Injury update
-- Playing XI (with captain and wicket-keeper menus)
-- Toss result
+**Match updates:** Match day, Toss result, Playing XI (captain and wicket-keeper menus), Wicket alert, Last match result, Injury update
+
+**Stats and analysis:** Player figures, Player analysis, Key player battle (two player photos), Team stats battle, Ground analysis, Pitch report, Weather report
+
+**Fan posts:** Captain's call (bat or bowl poll), Toss prediction, Playing XI prediction, Meme
 
 ## Features
 

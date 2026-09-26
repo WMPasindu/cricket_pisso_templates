@@ -7,7 +7,7 @@
 <body>
 <title>Match Card Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Montserrat:ital,wght@0,600;0,700;0,800;1,800;1,900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Montserrat:ital,wght@0,600;0,700;0,800;1,800;1,900&family=Anton&display=swap">
 <style>
 :root{
   --ground:#eef1f6; --panel:#ffffff; --ink:#141a2b; --muted:#5b647a; --line:#d6dbe6;
@@ -53,9 +53,12 @@ textarea{resize:vertical;min-height:130px;line-height:1.45;font-variant-numeric:
 input[type=text]:focus,select:focus,textarea:focus,button:focus-visible,.drop:focus-within{outline:2px solid var(--accent);outline-offset:1px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media (max-width:420px){.row{grid-template-columns:1fr}}
-.tpls{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-@media (max-width:420px){.tpls{grid-template-columns:repeat(2,1fr)}}
-.tpls button{padding:11px 8px;line-height:1.2}
+.tpls{display:flex;flex-direction:column;gap:14px}
+.tplGroup{display:flex;flex-direction:column;gap:6px}
+.tplGroup h3{margin:0;font:600 12px/1.2 Barlow,sans-serif;color:var(--muted)}
+.tplGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+@media (max-width:420px){.tplGrid{grid-template-columns:repeat(2,1fr)}}
+.tplGrid button{padding:11px 8px;line-height:1.2}
 .seg{display:flex;gap:6px;flex-wrap:wrap}
 .seg button{flex:1 1 auto}
 button{font:600 14px/1 Barlow,sans-serif;border-radius:6px;border:1px solid var(--line);background:var(--field);color:var(--ink);padding:10px 12px;cursor:pointer}
@@ -351,8 +354,90 @@ const TEMPLATES = {
       {k:'fixture',label:'Footer line 1',max:48},
       {k:'details',label:'Footer line 2',max:60}],
     data:{eyebrow:'TOSS UPDATE',team:'SRI LANKA',won:'WON THE TOSS',elected:'AND ELECTED TO',decision:'BAT FIRST',fixture:'SRI LANKA VS ENGLAND',details:'3RD ODI'}
+  },
+  battle:{ label:'Key player battle', fade:0.72,
+    fields:[
+      {k:'imgA',label:'Player 1 photo',type:'image',half:true,help:'Left half'},
+      {k:'imgB',label:'Player 2 photo',type:'image',half:true,help:'Right half'},
+      {k:'eyebrow',label:'Heading',max:32},
+      {k:'playerA',label:'Player 1',max:28,half:true},
+      {k:'roleA',label:'Player 1 role',max:20,half:true},
+      {k:'playerB',label:'Player 2',max:28,half:true},
+      {k:'roleB',label:'Player 2 role',max:20,half:true},
+      {k:'sub',label:'Stats heading',max:40},
+      {k:'stats',label:'Head-to-head stats',type:'area',help:'One per line as LABEL: VALUE. Up to 4.'},
+      {k:'cta',label:'Call to action',max:44},
+      {k:'fixture',label:'Footer line 1',max:48},
+      {k:'details',label:'Footer line 2',max:60}],
+    data:{eyebrow:'KEY BATTLE',playerA:'Batter Name',roleA:'BATTER',playerB:'Bowler Name',roleB:'BOWLER',sub:'HEAD TO HEAD IN ODIS',stats:'RUNS: 00\nBALLS: 00\nDISMISSALS: 0\nSTRIKE RATE: 00.0',cta:'WHO WINS THIS BATTLE?',fixture:'SRI LANKA VS ENGLAND',details:'3RD ODI'}
+  },
+  teamstats:{ label:'Team stats battle', fade:1.0, dim:0.5,
+    fields:[
+      {k:'eyebrow',label:'Heading',max:32},
+      {k:'teamA',label:'Team 1',max:20,half:true},
+      {k:'teamB',label:'Team 2',max:20,half:true},
+      {k:'stats',label:'Stats',type:'area',help:'One per line as LABEL: TEAM 1 | TEAM 2. Up to 7. Numbers fill the bars.'},
+      {k:'fixture',label:'Footer line 1',max:48},
+      {k:'details',label:'Footer line 2',max:60}],
+    data:{eyebrow:'TEAM BATTLE',teamA:'TEAM 1',teamB:'TEAM 2',stats:'MATCHES WON: 12 | 9\nWIN %: 60% | 45%\nAVG 1ST INNINGS: 278 | 254\nHIGHEST TOTAL: 367 | 342\nWICKETS TAKEN: 98 | 104\nCENTURIES: 7 | 5',fixture:'SRI LANKA VS ENGLAND',details:'LAST 20 ODIS'}
+  },
+  pitch:{ label:'Pitch report', fade:0.86,
+    fields:[
+      {k:'eyebrow',label:'Heading',max:32},
+      {k:'ground',label:'Ground name',max:32},
+      {k:'verdict',label:'Pitch type',type:'select',options:[['BATTING FRIENDLY','Batting friendly'],['BOWLING FRIENDLY','Bowling friendly'],['BALANCED','Balanced'],['SPIN FRIENDLY','Spin friendly'],['PACE FRIENDLY','Pace friendly'],['SLOW AND LOW','Slow and low'],['GREEN TOP','Green top']]},
+      {k:'pace',label:'Help for pace',type:'range',min:0,max:10,unit:'/10',half:true},
+      {k:'spin',label:'Help for spin',type:'range',min:0,max:10,unit:'/10',half:true},
+      {k:'bounce',label:'Bounce',type:'range',min:0,max:10,unit:'/10',half:true},
+      {k:'batting',label:'Batting ease',type:'range',min:0,max:10,unit:'/10',half:true},
+      {k:'avg',label:'Score line',max:40},
+      {k:'note',label:'Note',max:60},
+      {k:'fixture',label:'Footer line 1',max:48},
+      {k:'details',label:'Footer line 2',max:60}],
+    data:{eyebrow:'PITCH REPORT',ground:'Ground Name',verdict:'BALANCED',pace:'6',spin:'5',bounce:'6',batting:'7',avg:'PAR SCORE: 280',note:'BAT FIRST IF YOU WIN THE TOSS',fixture:'SRI LANKA VS ENGLAND',details:'3RD ODI'}
+  },
+  weather:{ label:'Weather report', fade:0.86,
+    fields:[
+      {k:'eyebrow',label:'Heading',max:32},
+      {k:'ground',label:'Ground and city',max:40},
+      {k:'cond',label:'Conditions',type:'select',half:true,options:[['SUNNY','Sunny'],['PARTLY CLOUDY','Partly cloudy'],['CLOUDY','Cloudy'],['LIGHT SHOWERS','Light showers'],['RAIN LIKELY','Rain likely'],['THUNDERSTORMS','Thunderstorms'],['CLEAR NIGHT','Clear night']]},
+      {k:'temp',label:'Temperature',max:8,half:true},
+      {k:'stats',label:'Details',type:'area',help:'One per line as LABEL: VALUE. Up to 4.'},
+      {k:'note',label:'Note',max:60},
+      {k:'fixture',label:'Footer line 1',max:48},
+      {k:'details',label:'Footer line 2',max:60}],
+    data:{eyebrow:'MATCH DAY WEATHER',ground:'Ground Name, City',cond:'PARTLY CLOUDY',temp:'29°C',stats:'RAIN CHANCE: 30%\nHUMIDITY: 75%\nWIND: 14 KM/H\nFEELS LIKE: 33°C',note:'A FULL GAME LOOKS LIKELY',fixture:'SRI LANKA VS ENGLAND',details:'3RD ODI'}
+  },
+  xipred:{ label:'Playing XI prediction', fade:1.0, dim:0.5,
+    fields:[
+      {k:'eyebrow',label:'Heading',max:32},
+      {k:'team',label:'Team',max:24},
+      {k:'players',label:'Players',type:'area',help:'One player per line, in batting order.'},
+      {k:'captain',label:'Captain',type:'player',src:'players',half:true},
+      {k:'wk',label:'Wicket-keeper',type:'player',src:'players',half:true},
+      {k:'extra',label:'Extra line (optional)',max:44},
+      {k:'cta',label:'Call to action',max:44},
+      {k:'fixture',label:'Footer line 1',max:48},
+      {k:'details',label:'Footer line 2',max:60}],
+    data:{eyebrow:'OUR PREDICTED XI',team:'SRI LANKA',players:'Player One\nPlayer Two\nPlayer Three\nPlayer Four\nPlayer Five\nPlayer Six\nPlayer Seven\nPlayer Eight\nPlayer Nine\nPlayer Ten\nPlayer Eleven',captain:'Player Four',wk:'Player Two',extra:'12TH MAN: PLAYER NAME',cta:'AGREE? DROP YOUR XI IN THE COMMENTS',fixture:'SRI LANKA VS ENGLAND',details:'3RD ODI'}
+  },
+  meme:{ label:'Meme', fade:0, noFooter:true,
+    fields:[
+      {k:'layout',label:'Style',type:'select',options:[['classic','Top and bottom text'],['caption','Caption bar on top']]},
+      {k:'top',label:'Top text (or caption)',max:140},
+      {k:'bottom',label:'Bottom text',max:140,help:'Not used with the caption bar style.'},
+      {k:'size',label:'Text size',type:'range',min:60,max:150,unit:'%'}],
+    data:{layout:'classic',top:'WHEN YOU WIN THE TOSS',bottom:'AND THE RAIN STARTS',size:'100'}
   }
 };
+
+const GROUPS=[
+  ['Match updates',['matchday','tossresult','squads','wicket','result','injury']],
+  ['Stats and analysis',['figures','player','battle','teamstats','ground','pitch','weather']],
+  ['Fan posts',['toss','tosswin','xipred','meme']]
+];
+const extraImgs={};
+function imgOf(tpl,k){ const e=extraImgs[tpl+'.'+k]; return e?e.img:null; }
 
 const SWATCHES = ['#1b3ea6','#0b2a5b','#7a1026','#0f5a3a','#1d1d24','#5a2a86'];
 
@@ -380,11 +465,17 @@ function saveDraft(){
 
 /* ---------- template UI ---------- */
 const tplWrap=$('tpls');
-Object.entries(TEMPLATES).forEach(([key,t])=>{
-  const b=document.createElement('button');
-  b.type='button'; b.textContent=t.label; b.dataset.tpl=key;
-  b.addEventListener('click',()=>{ state.tpl=key; saveDraft(); buildFields(); draw(); });
-  tplWrap.appendChild(b);
+GROUPS.forEach(([title,keys])=>{
+  const g=document.createElement('div'); g.className='tplGroup';
+  const h=document.createElement('h3'); h.textContent=title; g.appendChild(h);
+  const grid=document.createElement('div'); grid.className='tplGrid';
+  keys.forEach(key=>{
+    const b=document.createElement('button');
+    b.type='button'; b.textContent=TEMPLATES[key].label; b.dataset.tpl=key;
+    b.addEventListener('click',()=>{ state.tpl=key; saveDraft(); buildFields(); draw(); });
+    grid.appendChild(b);
+  });
+  g.appendChild(grid); tplWrap.appendChild(g);
 });
 
 function buildFields(){
@@ -403,9 +494,38 @@ function buildFields(){
 
   const box=$('fields'); box.innerHTML='';
   let pair=null;
+  const place=(lab,half)=>{
+    if(half){
+      if(!pair){ pair=document.createElement('div'); pair.className='row'; box.appendChild(pair); }
+      pair.appendChild(lab);
+      if(pair.children.length===2) pair=null;
+    } else { pair=null; box.appendChild(lab); }
+  };
   t.fields.forEach(f=>{
+    if(f.type==='image'){
+      const id=state.tpl+'.'+f.k, cur=extraImgs[id], note=f.help||'JPG or PNG';
+      const lab=document.createElement('label'); lab.className='drop';
+      const th=document.createElement('span'); th.className='thumb';
+      const tt=document.createElement('span'); tt.className='t';
+      const st=document.createElement('strong'); st.textContent=f.label;
+      const sm=document.createElement('small'); sm.textContent=cur?cur.name:note;
+      tt.append(st,sm);
+      const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.id='f-'+state.tpl+'-'+f.k;
+      const x=document.createElement('button'); x.type='button'; x.className='x'; x.textContent='Remove'; x.hidden=!cur;
+      if(cur) th.style.backgroundImage='url("'+cur.url+'")';
+      inp.addEventListener('change',async()=>{
+        const file=inp.files[0]; if(!file) return;
+        try{ const r=await loadImage(file); extraImgs[id]=r; th.style.backgroundImage='url("'+r.url+'")'; sm.textContent=r.name; x.hidden=false; setStatus('',''); draw(); }
+        catch(err){ setStatus(err.message,'warn'); }
+        inp.value='';
+      });
+      x.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); delete extraImgs[id]; th.style.backgroundImage=''; sm.textContent=note; x.hidden=true; draw(); });
+      lab.append(th,tt,inp,x);
+      place(lab,f.half); return;
+    }
     const lab=document.createElement('label'); lab.className='f';
-    lab.appendChild(document.createTextNode(f.label));
+    const lt=document.createTextNode(f.label);
+    lab.appendChild(lt);
     let el;
     if(f.type==='area'){ el=document.createElement('textarea'); el.rows=6; }
     else if(f.type==='select'){
@@ -414,9 +534,13 @@ function buildFields(){
     } else if(f.type==='player'){
       el=document.createElement('select'); el.dataset.src=f.src;
       fillPlayerOptions(el,d[f.src],d[f.k]);
+    } else if(f.type==='range'){
+      el=document.createElement('input'); el.type='range'; el.min=f.min; el.max=f.max; el.step=f.step||1;
     } else { el=document.createElement('input'); el.type='text'; if(f.max) el.maxLength=f.max; }
     el.id='f-'+state.tpl+'-'+f.k;
     el.value=d[f.k];
+    const showVal=()=>{ if(f.type==='range') lt.textContent=f.label+': '+el.value+(f.unit||''); };
+    showVal(); el.addEventListener('input',showVal);
     el.addEventListener('input',()=>{
       d[f.k]=el.value; saveDraft();
       if(f.k.startsWith('players')) box.querySelectorAll('select[data-src="'+f.k+'"]').forEach(sel=>{
@@ -427,11 +551,7 @@ function buildFields(){
     el.addEventListener('change',()=>{ d[f.k]=el.value; saveDraft(); draw(); });
     lab.appendChild(el);
     if(f.help){ const s=document.createElement('small'); s.textContent=f.help; lab.appendChild(s); }
-    if(f.half){
-      if(!pair){ pair=document.createElement('div'); pair.className='row'; box.appendChild(pair); }
-      pair.appendChild(lab);
-      if(pair.children.length===2) pair=null;
-    } else { pair=null; box.appendChild(lab); }
+    place(lab,f.half);
   });
 }
 
@@ -771,10 +891,10 @@ function parseStats(s){
     return i<0 ? {label:'',value:l} : {label:l.slice(0,i).trim(),value:l.slice(i+1).trim()};
   });
 }
-function drawTiles(items,top,bottom,base){
+function drawTiles(items,top,bottom,base,forceCols){
   if(!items.length) return;
   const n=items.length;
-  const cols = n<=3 ? n : n===4 ? 2 : 3;
+  const cols = forceCols ? Math.min(forceCols,n) : (n<=3 ? n : n===4 ? 2 : 3);
   const rows=Math.ceil(n/cols);
   const gap=W*0.018, left=W*0.07, width=W*0.86;
   const tw=(width-gap*(cols-1))/cols;
@@ -795,6 +915,77 @@ function drawTiles(items,top,bottom,base){
     const sp=spacedFit(it.label.toUpperCase(),'700',Math.min(20,th*0.16),2.5,tw-24);
     spacedText(it.label.toUpperCase(),x+tw/2,y+th*0.84,sp,'center');
   });
+}
+
+function drawCover(img,x,y,w,h){
+  const s=Math.max(w/img.width,h/img.height), dw=img.width*s, dh=img.height*s;
+  ctx.save(); ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
+  ctx.drawImage(img,x+(w-dw)/2,y+(h-dh)*0.3,dw,dh);
+  ctx.restore();
+}
+function parseCompare(s){
+  return s.split('\n').map(l=>l.trim()).filter(Boolean).slice(0,7).map(l=>{
+    const i=l.indexOf(':');
+    const label=i<0?'':l.slice(0,i).trim(), rest=i<0?l:l.slice(i+1);
+    const parts=rest.split('|');
+    return {label,a:(parts[0]||'').trim(),b:(parts[1]||'').trim()};
+  });
+}
+function num(v){ const n=parseFloat(String(v).replace(/[^0-9.\-]/g,'')); return isNaN(n)?null:n; }
+function circle(cx,cy,r,col){ ctx.fillStyle=col; ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill(); }
+function drawSun(cx,cy,r){
+  circle(cx,cy,r,GOLD);
+  ctx.save(); ctx.strokeStyle=GOLD; ctx.lineWidth=r*0.17; ctx.lineCap='round';
+  for(let i=0;i<8;i++){ const a=i*Math.PI/4; ctx.beginPath(); ctx.moveTo(cx+Math.cos(a)*r*1.35,cy+Math.sin(a)*r*1.35); ctx.lineTo(cx+Math.cos(a)*r*1.75,cy+Math.sin(a)*r*1.75); ctx.stroke(); }
+  ctx.restore();
+}
+function drawCloud(cx,cy,s,col){
+  circle(cx-s*0.42,cy+s*0.1,s*0.3,col);
+  circle(cx-s*0.04,cy-s*0.12,s*0.42,col);
+  circle(cx+s*0.4,cy+s*0.06,s*0.32,col);
+  ctx.fillStyle=col; roundRect(cx-s*0.72,cy+s*0.02,s*1.44,s*0.38,s*0.19); ctx.fill();
+}
+function drawMoon(cx,cy,r){
+  const c=document.createElement('canvas'); c.width=c.height=Math.ceil(r*2.4);
+  const x=c.getContext('2d'), m=c.width/2;
+  x.fillStyle='#f6ecc0'; x.beginPath(); x.arc(m,m,r,0,Math.PI*2); x.fill();
+  x.globalCompositeOperation='destination-out'; x.beginPath(); x.arc(m+r*0.45,m-r*0.3,r*0.85,0,Math.PI*2); x.fill();
+  ctx.drawImage(c,cx-m,cy-m);
+}
+function drawWeatherIcon(kind,cx,cy,s){
+  const rainDrops=(n)=>{ ctx.save(); ctx.strokeStyle='#9fd3ff'; ctx.lineWidth=s*0.09; ctx.lineCap='round';
+    for(let i=0;i<n;i++){ const x=cx-s*0.4+i*s*0.8/(n-1); ctx.beginPath(); ctx.moveTo(x,cy+s*0.55); ctx.lineTo(x-s*0.12,cy+s*0.85); ctx.stroke(); } ctx.restore(); };
+  if(kind==='SUNNY') drawSun(cx,cy,s*0.48);
+  else if(kind==='PARTLY CLOUDY'){ drawSun(cx+s*0.28,cy-s*0.28,s*0.34); drawCloud(cx-s*0.08,cy+s*0.12,s*0.82,'#ffffff'); }
+  else if(kind==='CLOUDY'){ drawCloud(cx+s*0.2,cy-s*0.22,s*0.6,'rgba(255,255,255,.55)'); drawCloud(cx-s*0.05,cy+s*0.08,s*0.85,'#ffffff'); }
+  else if(kind==='LIGHT SHOWERS'){ drawSun(cx+s*0.3,cy-s*0.35,s*0.3); drawCloud(cx-s*0.05,cy-s*0.02,s*0.8,'#ffffff'); rainDrops(2); }
+  else if(kind==='RAIN LIKELY'){ drawCloud(cx,cy-s*0.05,s*0.9,'#e4e9f2'); rainDrops(3); }
+  else if(kind==='THUNDERSTORMS'){
+    drawCloud(cx,cy-s*0.08,s*0.9,'#c9d0dd');
+    ctx.fillStyle=GOLD; ctx.beginPath();
+    ctx.moveTo(cx+s*0.05,cy+s*0.3); ctx.lineTo(cx-s*0.2,cy+s*0.68); ctx.lineTo(cx,cy+s*0.66);
+    ctx.lineTo(cx-s*0.12,cy+s*0.98); ctx.lineTo(cx+s*0.25,cy+s*0.52); ctx.lineTo(cx+s*0.04,cy+s*0.54); ctx.closePath(); ctx.fill();
+  }
+  else if(kind==='CLEAR NIGHT'){ drawMoon(cx,cy,s*0.48); circle(cx+s*0.55,cy-s*0.45,s*0.05,'#fff'); circle(cx-s*0.6,cy-s*0.2,s*0.035,'#fff'); circle(cx+s*0.62,cy+s*0.25,s*0.03,'#fff'); }
+  else drawCloud(cx,cy,s*0.85,'#ffffff');
+}
+function memeFont(size){ ctx.font=size+'px Anton, Impact, "Arial Black", sans-serif'; }
+function wrapWords(text,maxW){
+  const words=text.split(/\s+/).filter(Boolean), lines=[]; let cur='';
+  words.forEach(w=>{ const t=cur?cur+' '+w:w; if(ctx.measureText(t).width>maxW && cur){ lines.push(cur); cur=w; } else cur=t; });
+  if(cur) lines.push(cur); return lines;
+}
+function memeText(text,y,anchor,k){
+  if(!text.trim()) return;
+  let size=Math.round(104*k), lines;
+  for(;;){ memeFont(size); lines=wrapWords(text,W*0.92);
+    if((lines.length<=3 && !lines.some(l=>ctx.measureText(l).width>W*0.92)) || size<=28) break; size-=4; }
+  const lh=size*1.08;
+  ctx.save(); ctx.textAlign='center'; ctx.lineJoin='round'; ctx.miterLimit=2;
+  ctx.lineWidth=Math.max(5,size*0.13); ctx.strokeStyle='#000'; ctx.fillStyle='#fff';
+  let yy = anchor==='top' ? y+size*0.95 : y-(lines.length-1)*lh;
+  lines.forEach(l=>{ ctx.strokeText(l,W/2,yy); ctx.fillText(l,W/2,yy); yy+=lh; });
+  ctx.restore();
 }
 
 /* ---------- template renderers (y measured from bottom: B - n*W) ---------- */
@@ -980,6 +1171,133 @@ const R = {
     setFont('italic 900',72); const pw=Math.min(W*0.8,ctx.measureText(t).width+120), ph=110, py=B-W*0.275;
     ctx.fillStyle=GOLD; roundRect(W/2-pw/2,py,pw,ph,55); ctx.fill();
     ctx.fillStyle='#1a1400'; fitFont(t,'italic 900',72,pw-70); ctx.fillText(t,W/2,py+ph*0.7);
+  },
+  battle(d,B){
+    eyebrow(d.eyebrow,B-W*0.64);
+    const vy=B-W*0.545;
+    circle(W/2,vy,46,GOLD);
+    ctx.fillStyle='#1a1400'; setFont('italic 900',38); ctx.fillText('VS',W/2,vy+13);
+    shadowOn(14); ctx.fillStyle='#fff';
+    ctx.textAlign='left'; fitFont(d.playerA,'italic 900',60,W*0.36); ctx.fillText(d.playerA,W*0.06,vy+18);
+    ctx.textAlign='right'; fitFont(d.playerB,'italic 900',60,W*0.36); ctx.fillText(d.playerB,W*0.94,vy+18);
+    shadowOff(); ctx.fillStyle=GOLD;
+    let sp=spacedFit(d.roleA.toUpperCase(),'700',22,5,W*0.34); spacedText(d.roleA.toUpperCase(),W*0.06,vy+58,sp,'left');
+    sp=spacedFit(d.roleB.toUpperCase(),'700',22,5,W*0.34); spacedText(d.roleB.toUpperCase(),W*0.94,vy+58,sp,'right');
+    ctx.textAlign='center'; ctx.fillStyle='rgba(255,255,255,.8)';
+    sp=spacedFit(d.sub.toUpperCase(),'700',22,6,W*0.8); spacedText(d.sub.toUpperCase(),W/2,B-W*0.4,sp,'center');
+    drawTiles(parseStats(d.stats).slice(0,4),B-W*0.38,B-W*0.19,null,4);
+    if(d.cta.trim()){ ctx.fillStyle=GOLD; fitFont(d.cta.toUpperCase(),'italic 800',34,W*0.86); ctx.fillText(d.cta.toUpperCase(),W/2,B-W*0.135); }
+  },
+  teamstats(d,B){
+    eyebrow(d.eyebrow,B-W*0.84);
+    const hy=B-W*0.755;
+    shadowOn(14); ctx.fillStyle='#fff';
+    ctx.textAlign='left'; fitFont(d.teamA.toUpperCase(),'italic 900',58,W*0.38); ctx.fillText(d.teamA.toUpperCase(),W*0.07,hy);
+    ctx.textAlign='right'; fitFont(d.teamB.toUpperCase(),'italic 900',58,W*0.38); ctx.fillText(d.teamB.toUpperCase(),W*0.93,hy);
+    shadowOff();
+    ctx.fillStyle=GOLD; ctx.fillRect(W*0.07,hy+16,70,5);
+    ctx.fillStyle='#fff'; ctx.fillRect(W*0.93-70,hy+16,70,5);
+    ctx.textAlign='center'; ctx.fillStyle=GOLD; setFont('italic 900',36); ctx.fillText('VS',W/2,hy-6);
+    const rows=parseCompare(d.stats); if(!rows.length) return;
+    const top=B-W*0.69, bottom=B-W*0.14, rh=Math.min((bottom-top)/rows.length,W*0.095);
+    const bx=W*0.07, bw=W*0.86;
+    rows.forEach((r,i)=>{
+      const y=top+i*rh, vs=Math.min(46,rh*0.5);
+      ctx.textAlign='left'; ctx.fillStyle=GOLD; fitFont(r.a,'italic 900',vs,W*0.25); ctx.fillText(r.a,bx,y+rh*0.5);
+      ctx.textAlign='right'; ctx.fillStyle='#fff'; fitFont(r.b,'italic 900',vs,W*0.25); ctx.fillText(r.b,bx+bw,y+rh*0.5);
+      ctx.textAlign='center'; ctx.fillStyle='rgba(255,255,255,.85)';
+      const lab=r.label.toUpperCase(), sp=spacedFit(lab,'700',Math.min(22,rh*0.24),4,W*0.4);
+      spacedText(lab,W/2,y+rh*0.46,sp,'center');
+      const a=num(r.a), b=num(r.b), by=y+rh*0.64, bh=Math.max(8,rh*0.13);
+      ctx.fillStyle='rgba(255,255,255,.15)'; roundRect(bx,by,bw,bh,bh/2); ctx.fill();
+      if(a!=null && b!=null && a>=0 && b>=0 && a+b>0){
+        const aw=bw*a/(a+b);
+        ctx.save(); roundRect(bx,by,bw,bh,bh/2); ctx.clip();
+        ctx.fillStyle=GOLD; ctx.fillRect(bx,by,Math.max(0,aw-2),bh);
+        ctx.fillStyle='#fff'; ctx.fillRect(bx+aw+2,by,Math.max(0,bw-aw-2),bh);
+        ctx.restore();
+      }
+    });
+  },
+  pitch(d,B){
+    eyebrow(d.eyebrow,B-W*0.75);
+    ctx.fillStyle='#fff'; shadowOn(16); fitFont(d.ground,'italic 900',80,W*0.86); ctx.fillText(d.ground,W/2,B-W*0.672); shadowOff();
+    const v=d.verdict.toUpperCase(); setFont('italic 900',34);
+    const pw=Math.min(W*0.8,ctx.measureText(v).width+70), py=B-W*0.645;
+    ctx.fillStyle=GOLD; roundRect(W/2-pw/2,py,pw,58,29); ctx.fill();
+    ctx.fillStyle='#1a1400'; fitFont(v,'italic 900',34,pw-40); ctx.fillText(v,W/2,py+41);
+    const bars=[['PACE',d.pace],['SPIN',d.spin],['BOUNCE',d.bounce],['BATTING',d.batting]];
+    const x=W*0.07, w=W*0.86, gap=6, sw=(w-gap*9)/10;
+    bars.forEach(([lab,val],i)=>{
+      const y=B-W*0.515+i*W*0.075, n=Math.max(0,Math.min(10,Math.round(+val||0)));
+      ctx.fillStyle='#fff'; setFont('700',24); spacedText(lab,x,y,4,'left');
+      ctx.textAlign='right'; ctx.fillStyle=GOLD; setFont('italic 900',30); ctx.fillText(n+'/10',x+w,y+2); ctx.textAlign='center';
+      for(let s=0;s<10;s++){ ctx.fillStyle = s<n ? GOLD : 'rgba(255,255,255,.14)'; roundRect(x+s*(sw+gap),y+14,sw,18,4); ctx.fill(); }
+    });
+    ctx.fillStyle='#fff'; fitFont(d.avg.toUpperCase(),'italic 800',38,W*0.86); ctx.fillText(d.avg.toUpperCase(),W/2,B-W*0.2);
+    ctx.fillStyle=GOLD; fitFont(d.note.toUpperCase(),'italic 800',30,W*0.86); ctx.fillText(d.note.toUpperCase(),W/2,B-W*0.145);
+  },
+  weather(d,B){
+    eyebrow(d.eyebrow,B-W*0.73);
+    ctx.fillStyle='#fff'; shadowOn(16); fitFont(d.ground,'italic 900',62,W*0.86); ctx.fillText(d.ground,W/2,B-W*0.655); shadowOff();
+    const cy=B-W*0.515;
+    drawWeatherIcon(d.cond,W*0.3,cy,W*0.16);
+    ctx.textAlign='left'; ctx.fillStyle='#fff'; shadowOn(16);
+    fitFont(d.temp,'italic 900',140,W*0.48); ctx.fillText(d.temp,W*0.45,cy+40); shadowOff();
+    ctx.fillStyle=GOLD; fitFont(d.cond,'italic 800',36,W*0.48); ctx.fillText(d.cond,W*0.455,cy+90);
+    ctx.textAlign='center';
+    drawTiles(parseStats(d.stats).slice(0,4),B-W*0.37,B-W*0.19,null,4);
+    ctx.fillStyle='#fff'; fitFont(d.note.toUpperCase(),'italic 800',32,W*0.86); ctx.fillText(d.note.toUpperCase(),W/2,B-W*0.135);
+  },
+  xipred(d,B){
+    eyebrow(d.eyebrow,B-W*0.87);
+    ctx.fillStyle='#fff'; shadowOn(14); fitFont(d.team.toUpperCase(),'italic 900',72,W*0.86); ctx.fillText(d.team.toUpperCase(),W/2,B-W*0.79); shadowOff();
+    const names=d.players.split('\n').map(v=>v.trim()).filter(Boolean).slice(0,12);
+    if(!names.length) return;
+    const perCol=Math.ceil(names.length/2), colW=W*0.42, xs=[W*0.07,W*0.51];
+    const top=B-W*0.755, rh=Math.min(W*0.083,(W*0.52)/perCol), h=rh*0.84;
+    names.forEach((raw,i)=>{
+      const col=i<perCol?0:1, r=i<perCol?i:i-perCol, x=xs[col], y=top+r*rh;
+      const name=cleanName(raw), tags=[];
+      if(d.captain && name===d.captain) tags.push('(c)');
+      if(d.wk && name===d.wk) tags.push('(wk)');
+      ctx.fillStyle='rgba(255,255,255,.1)'; roundRect(x,y,colW,h,h/2); ctx.fill();
+      const cr=h*0.36; circle(x+h/2,y+h/2,cr,GOLD);
+      ctx.fillStyle='#1a1400'; setFont('900',cr*1.05); ctx.fillText(String(i+1),x+h/2,y+h/2+cr*0.37);
+      ctx.textAlign='left';
+      const tagText=tags.join(' '); setFont('800',h*0.36); const tw=tagText?ctx.measureText(tagText).width+10:0;
+      ctx.fillStyle='#fff'; fitFont(name,'700',h*0.44,colW-h-24-tw); ctx.fillText(name,x+h+8,y+h*0.64);
+      if(tagText){ const nw=ctx.measureText(name).width; ctx.fillStyle=GOLD; setFont('800',h*0.36); ctx.fillText(tagText,x+h+8+nw+10,y+h*0.64); }
+      ctx.textAlign='center';
+    });
+    if(d.extra.trim()){ ctx.fillStyle='#fff'; fitFont(d.extra.toUpperCase(),'italic 800',30,W*0.86); ctx.fillText(d.extra.toUpperCase(),W/2,B-W*0.2); }
+    if(d.cta.trim()){ ctx.fillStyle=GOLD; fitFont(d.cta.toUpperCase(),'italic 800',32,W*0.86); ctx.fillText(d.cta.toUpperCase(),W/2,B-W*0.145); }
+  },
+  meme(d,B){
+    const k=(+d.size||100)/100;
+    if(d.layout==='caption'){
+      if(!d.top.trim()) return;
+      const pad=W*0.05, r=wrapFit(d.top,'700',Math.round(48*k),W*0.9,6), lh=r.size*1.28;
+      const barH=pad*2+r.size+(r.lines.length-1)*lh;
+      ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,barH);
+      ctx.fillStyle='#111111'; setFont('700',r.size); ctx.textAlign='left';
+      let y=pad+r.size*0.85; r.lines.forEach(l=>{ ctx.fillText(l,pad,y); y+=lh; });
+      ctx.textAlign='center';
+    } else {
+      memeText(d.top.toUpperCase(),W*0.03,'top',k);
+      memeText(d.bottom.toUpperCase(),B-W*0.075,'bottom',k);
+    }
+  }
+};
+
+const BG = {
+  battle(d,H){
+    const A=imgOf('battle','imgA'), Bi=imgOf('battle','imgB');
+    if(!A && !Bi) return;
+    const base=hexToRgb(state.color);
+    if(A) drawCover(A,0,0,W/2,H); else { ctx.fillStyle=rgba(shade(base,-0.5),1); ctx.fillRect(0,0,W/2,H); }
+    if(Bi) drawCover(Bi,W/2,0,W/2,H); else { ctx.fillStyle=rgba(shade(base,-0.5),1); ctx.fillRect(W/2,0,W/2,H); }
+    ctx.fillStyle=GOLD; ctx.fillRect(W/2-3,0,6,H);
   }
 };
 
@@ -991,6 +1309,7 @@ function draw(){
   const t=TEMPLATES[state.tpl], d=state.d[state.tpl];
   ctx.clearRect(0,0,W,H);
   if(state.photo) drawPhoto(H); else drawPlaceholder(H,base);
+  if(BG[state.tpl]) BG[state.tpl](d,H);
 
   if(t.dim){ ctx.fillStyle=rgba(shade(base,-0.6),t.dim); ctx.fillRect(0,0,W,H); }
   const top=Math.max(0,H-W*t.fade);
@@ -1005,10 +1324,12 @@ function draw(){
   R[t.render||state.tpl](d,B);
 
   // footer
-  ctx.fillStyle='rgba(255,255,255,.95)';
-  const f1=(d.fixture||'').toUpperCase(), f2=(d.details||'').toUpperCase();
-  let sp=spacedFit(f1,'700',25,11,W*0.6); spacedText(f1,W/2,B-W*0.083,sp,'center');
-  sp=spacedFit(f2,'600',21,3.5,W*0.6); spacedText(f2,W/2,B-W*0.049,sp,'center');
+  if(!t.noFooter){
+    ctx.fillStyle='rgba(255,255,255,.95)';
+    const f1=(d.fixture||'').toUpperCase(), f2=(d.details||'').toUpperCase();
+    let sp=spacedFit(f1,'700',25,11,W*0.6); spacedText(f1,W/2,B-W*0.083,sp,'center');
+    sp=spacedFit(f2,'600',21,3.5,W*0.6); spacedText(f2,W/2,B-W*0.049,sp,'center');
+  }
 
   const logoBox=W*0.105, logoY=B-W*0.072;
   ['logoL','logoR'].forEach(k=>{
@@ -1042,7 +1363,7 @@ let downloads=null;
 if(window.claude && window.claude.use){ window.claude.use('downloads').then(d=>{ downloads=d; }).catch(()=>{}); }
 function fileName(){
   const d=state.d[state.tpl];
-  const base=(d.name||d.ground||d.teamA||TEMPLATES[state.tpl].label);
+  const base=(d.name||d.ground||d.playerA||d.team||d.teamA||TEMPLATES[state.tpl].label);
   const n=(state.tpl+'-'+base).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   return (n||'match-card')+'-'+state.H+'.png';
 }
@@ -1074,7 +1395,8 @@ Promise.all([
   document.fonts.load('italic 800 40px Montserrat'),
   document.fonts.load('800 20px Montserrat'),
   document.fonts.load('700 20px Montserrat'),
-  document.fonts.load('600 20px Montserrat')
+  document.fonts.load('600 20px Montserrat'),
+  document.fonts.load('40px Anton')
 ]).then(draw).catch(draw);
 document.fonts.ready.then(draw);
 })();
