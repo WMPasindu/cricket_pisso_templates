@@ -6,7 +6,7 @@ Open `index.html` in a browser, pick a post type, upload a photo, fill in the de
 
 ## Post types
 
-**Match updates:** Match day, Toss result, Playing XI (captain and wicket-keeper menus), Wicket alert, Last match result, Injury update
+**Match updates:** Match day (one main photo, or two side-by-side photos or flags), Toss result, Playing XI (captain and wicket-keeper menus), Wicket alert, Last match result, Injury update
 
 **Stats and analysis:** Player figures, Player analysis, Key player battle (two player photos), Team stats battle, Ground analysis, Pitch report, Weather report
 
