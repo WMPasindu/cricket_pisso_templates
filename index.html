@@ -229,13 +229,16 @@ const TEMPLATES = {
   },
   matchday:{ label:'Match day', fade:0.72,
     fields:[
+      {k:'imgA',label:'Team 1 photo',type:'image',half:true,help:'Left side (optional)'},
+      {k:'imgB',label:'Team 2 photo',type:'image',half:true,help:'Right side (optional)'},
+      {k:'sideFit',label:'Side photos',type:'select',help:'Leave both side photos empty to use the main photo instead.',options:[['fill','Fill each half (captains, players)'],['fit','Show whole image (flags, logos)']]},
       {k:'title',label:'Headline',max:24},
       {k:'teamA',label:'Team 1',max:24},
       {k:'teamB',label:'Team 2',max:24},
       {k:'info',label:'Match',max:40},
       {k:'fixture',label:'Venue',max:48},
       {k:'details',label:'Date and time',max:60}],
-    data:{title:'MATCH DAY',teamA:'SRI LANKA',teamB:'ENGLAND',info:'3RD ODI',fixture:'VENUE NAME, CITY',details:'DATE | START TIME (SL TIME)'}
+    data:{sideFit:'fill',title:'MATCH DAY',teamA:'SRI LANKA',teamB:'ENGLAND',info:'3RD ODI',fixture:'VENUE NAME, CITY',details:'DATE | START TIME (SL TIME)'}
   },
   player:{ label:'Player analysis', fade:0.78,
     fields:[
@@ -817,7 +820,7 @@ function drawPlaceholder(H,base){
     rg.addColorStop(0,rgba(tone,0.22)); rg.addColorStop(1,rgba(tone,0));
     ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
   });
-  if(TEMPLATES[state.tpl].dim) return;
+  if(TEMPLATES[state.tpl].dim || imgOf(state.tpl,'imgA') || imgOf(state.tpl,'imgB')) return;
   ctx.save();
   ctx.fillStyle='rgba(255,255,255,.55)'; ctx.font='600 24px '+FAM; ctx.textAlign='center';
   ctx.fillText('UPLOAD A PHOTO', W/2, H*0.2);
@@ -1290,15 +1293,26 @@ const R = {
   }
 };
 
-const BG = {
-  battle(d,H){
-    const A=imgOf('battle','imgA'), Bi=imgOf('battle','imgB');
-    if(!A && !Bi) return;
-    const base=hexToRgb(state.color);
-    if(A) drawCover(A,0,0,W/2,H); else { ctx.fillStyle=rgba(shade(base,-0.5),1); ctx.fillRect(0,0,W/2,H); }
-    if(Bi) drawCover(Bi,W/2,0,W/2,H); else { ctx.fillStyle=rgba(shade(base,-0.5),1); ctx.fillRect(W/2,0,W/2,H); }
-    ctx.fillStyle=GOLD; ctx.fillRect(W/2-3,0,6,H);
+function splitBg(tpl,H,fit){
+  const A=imgOf(tpl,'imgA'), Bi=imgOf(tpl,'imgB');
+  if(!A && !Bi) return;
+  if(fit){
+    const pad=W*0.035, top=W*0.07, bottom=H-W*0.56, h=bottom-top, w=W/2-pad*2;
+    [[A,0],[Bi,W/2]].forEach(([im,x0])=>{
+      if(!im) return;
+      const s=Math.min(w/im.width,h/im.height), dw=im.width*s, dh=im.height*s;
+      ctx.save(); shadowOn(36); ctx.drawImage(im,x0+pad+(w-dw)/2,top+(h-dh)/2,dw,dh); ctx.restore();
+    });
+    return;
   }
+  const base=hexToRgb(state.color);
+  if(A) drawCover(A,0,0,W/2,H); else if(!state.photo){ ctx.fillStyle=rgba(shade(base,-0.5),1); ctx.fillRect(0,0,W/2,H); }
+  if(Bi) drawCover(Bi,W/2,0,W/2,H); else if(!state.photo){ ctx.fillStyle=rgba(shade(base,-0.5),1); ctx.fillRect(W/2,0,W/2,H); }
+  ctx.fillStyle=GOLD; ctx.fillRect(W/2-3,0,6,H);
+}
+const BG = {
+  battle(d,H){ splitBg('battle',H,false); },
+  matchday(d,H){ splitBg('matchday',H,d.sideFit==='fit'); }
 };
 
 function draw(){
