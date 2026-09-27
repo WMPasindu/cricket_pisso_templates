@@ -119,6 +119,7 @@ input[type=color]{width:34px;height:34px;border:1px solid var(--line);border-rad
           <input type="file" id="photo" accept="image/*">
           <button type="button" class="x" id="photoClear" hidden>Remove</button>
         </label>
+        <div id="extraPhotos" style="display:flex;flex-direction:column;gap:10px" hidden></div>
         <label class="f">Zoom <input type="range" id="zoom" min="1" max="3" step="0.01" value="1"></label>
         <div class="seg">
           <button type="button" id="resetPos">Reset position</button>
@@ -231,7 +232,7 @@ const TEMPLATES = {
     fields:[
       {k:'imgA',label:'Team 1 photo',type:'image',half:true,help:'Left side (optional)'},
       {k:'imgB',label:'Team 2 photo',type:'image',half:true,help:'Right side (optional)'},
-      {k:'sideFit',label:'Side photos',type:'select',help:'Leave both side photos empty to use the main photo instead.',options:[['fill','Fill each half (captains, players)'],['fit','Show whole image (flags, logos)']]},
+      {k:'sideFit',label:'Side photos',type:'select',photo:true,help:'Leave both side photos empty to use the main photo instead.',options:[['fill','Fill each half (captains, players)'],['fit','Show whole image (flags, logos)']]},
       {k:'title',label:'Headline',max:24},
       {k:'teamA',label:'Team 1',max:24},
       {k:'teamB',label:'Team 2',max:24},
@@ -496,8 +497,15 @@ function buildFields(){
   } else pr.hidden=true;
 
   const box=$('fields'); box.innerHTML='';
+  const extra=$('extraPhotos'); extra.innerHTML=''; let extraRow=null;
+  extra.hidden=!t.fields.some(f=>f.type==='image');
   let pair=null;
-  const place=(lab,half)=>{
+  const place=(lab,half,f)=>{
+    if(f && (f.type==='image' || f.photo)){
+      if(f.type==='image'){ if(!extraRow){ extraRow=document.createElement('div'); extraRow.className='row'; extra.appendChild(extraRow); } extraRow.appendChild(lab); }
+      else extra.appendChild(lab);
+      return;
+    }
     if(half){
       if(!pair){ pair=document.createElement('div'); pair.className='row'; box.appendChild(pair); }
       pair.appendChild(lab);
@@ -524,7 +532,7 @@ function buildFields(){
       });
       x.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); delete extraImgs[id]; th.style.backgroundImage=''; sm.textContent=note; x.hidden=true; draw(); });
       lab.append(th,tt,inp,x);
-      place(lab,f.half); return;
+      place(lab,f.half,f); return;
     }
     const lab=document.createElement('label'); lab.className='f';
     const lt=document.createTextNode(f.label);
@@ -554,7 +562,7 @@ function buildFields(){
     el.addEventListener('change',()=>{ d[f.k]=el.value; saveDraft(); draw(); });
     lab.appendChild(el);
     if(f.help){ const s=document.createElement('small'); s.textContent=f.help; lab.appendChild(s); }
-    place(lab,f.half);
+    place(lab,f.half,f);
   });
 }
 
