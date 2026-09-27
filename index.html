@@ -432,11 +432,29 @@ const TEMPLATES = {
       {k:'bottom',label:'Bottom text',max:140,help:'Not used with the caption bar style.'},
       {k:'size',label:'Text size',type:'range',min:60,max:150,unit:'%'}],
     data:{layout:'classic',top:'WHEN YOU WIN THE TOSS',bottom:'AND THE RAIN STARTS',size:'100'}
+  },
+  chase:{ label:'Innings break', fade:0.95, dim:0.3,
+    fields:[
+      {k:'eyebrow',label:'Heading',max:32},
+      {k:'batTeam',label:'Batting first',max:24,half:true},
+      {k:'chaseTeam',label:'Chasing team',max:24,half:true},
+      {k:'score',label:'Score (runs/wickets)',max:10,half:true},
+      {k:'overs',label:'Overs in the innings',max:6,half:true,help:'Used for the required run rate.'},
+      {k:'topLine',label:'Highlight line (optional)',max:48},
+      {k:'question',label:'Question',max:60,help:'{team} becomes the chasing team.'},
+      {k:'optA',label:'Option 1',max:22,half:true},
+      {k:'reactA',label:'Vote with',type:'select',options:[['👍 LIKE','👍 Like'],['❤️ LOVE','❤️ Love'],['😂 HAHA','😂 Haha'],['😮 WOW','😮 Wow'],['😢 SAD','😢 Sad'],['😡 ANGRY','😡 Angry']],half:true},
+      {k:'optB',label:'Option 2',max:22,half:true},
+      {k:'reactB',label:'Vote with',type:'select',options:[['👍 LIKE','👍 Like'],['❤️ LOVE','❤️ Love'],['😂 HAHA','😂 Haha'],['😮 WOW','😮 Wow'],['😢 SAD','😢 Sad'],['😡 ANGRY','😡 Angry']],half:true},
+      {k:'decor',label:'Decoration emojis',max:24,help:'Scattered around the score. Leave empty for none.'},
+      {k:'fixture',label:'Footer line 1',max:48},
+      {k:'details',label:'Footer line 2',max:60}],
+    data:{eyebrow:'INNINGS BREAK 🏏',batTeam:'SRI LANKA',chaseTeam:'ENGLAND',score:'287/6',overs:'50',topLine:'TOP SCORER: PLAYER NAME 102 (98)',question:'CAN {team} CHASE IT DOWN? 🤔',optA:'YES, EASILY 💪',reactA:'👍 LIKE',optB:'NO CHANCE 😬',reactB:'❤️ LOVE',decor:'🔥🏏😱💥🎯',fixture:'SRI LANKA VS ENGLAND',details:'3RD ODI'}
   }
 };
 
 const GROUPS=[
-  ['Match updates',['matchday','tossresult','squads','wicket','result','injury']],
+  ['Match updates',['matchday','tossresult','squads','wicket','chase','result','injury']],
   ['Stats and analysis',['figures','player','battle','teamstats','ground','pitch','weather']],
   ['Fan posts',['toss','tosswin','xipred','meme']]
 ];
@@ -1298,6 +1316,58 @@ const R = {
       memeText(d.top.toUpperCase(),W*0.03,'top',k);
       memeText(d.bottom.toUpperCase(),B-W*0.075,'bottom',k);
     }
+  },
+  chase(d,B){
+    const EMO='"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+    // scattered decoration
+    const em = (window.Intl && Intl.Segmenter) ? [...new Intl.Segmenter(undefined,{granularity:'grapheme'}).segment(d.decor)].map(x=>x.segment).filter(x=>x.trim()) : Array.from(d.decor).filter(x=>x.trim());
+    if(em.length){
+      const spots=[[0.11,0.76,80,-0.25],[0.89,0.78,72,0.2],[0.19,0.9,52,0.15],[0.81,0.91,56,-0.12],[0.06,0.5,60,0.3],[0.94,0.515,58,-0.3],[0.13,0.66,54,0.1],[0.88,0.67,62,-0.2]];
+      spots.forEach(([x,y,sz,rot],i)=>{
+        ctx.save(); ctx.globalAlpha=0.95; ctx.translate(W*x,B-W*y); ctx.rotate(rot);
+        ctx.font=sz+'px '+EMO; ctx.textAlign='center'; ctx.fillText(em[i%em.length],0,sz*0.35);
+        ctx.restore();
+      });
+    }
+    eyebrow(d.eyebrow,B-W*0.865);
+    ctx.fillStyle='rgba(255,255,255,.9)';
+    fitFont(d.batTeam.toUpperCase(),'italic 800',44,W*0.6); ctx.fillText(d.batTeam.toUpperCase(),W/2,B-W*0.805);
+    const sy=B-W*0.655;
+    const bs=fitFont(d.score,'italic 900',160,W*0.6);
+    const tg=ctx.createLinearGradient(0,sy-bs*0.75,0,sy);
+    tg.addColorStop(0,'#ffffff'); tg.addColorStop(0.55,'#f1f3f8'); tg.addColorStop(1,'#c9cfdc');
+    shadowOn(24); ctx.fillStyle=tg; ctx.fillText(d.score,W/2,sy); shadowOff();
+    const ov=d.overs.trim();
+    const sub=[ov?'('+ov+' OVERS)':'',d.topLine.trim()].filter(Boolean).join('  •  ').toUpperCase();
+    ctx.fillStyle='#fff'; fitFont(sub,'italic 700',28,W*0.76); ctx.fillText(sub,W/2,B-W*0.61);
+    // target pill
+    const runs=parseInt(d.score,10), o=parseFloat(ov);
+    if(!isNaN(runs)){
+      const target=runs+1;
+      let txt='TARGET '+target;
+      if(o>0) txt+='   •   RRR '+(target/o).toFixed(2);
+      setFont('italic 900',36); const pw=Math.min(W*0.8,ctx.measureText(txt).width+80), py=B-W*0.585;
+      ctx.fillStyle=GOLD; roundRect(W/2-pw/2,py,pw,62,31); ctx.fill();
+      ctx.fillStyle='#1a1400'; fitFont(txt,'italic 900',36,pw-50); ctx.fillText(txt,W/2,py+44);
+    }
+    // question
+    const q=d.question.replace(/\{team\}/gi,d.chaseTeam).toUpperCase();
+    ctx.fillStyle='#fff'; shadowOn(16);
+    const h=wrapFit(q,'italic 900',66,W*0.88,2), lh=h.size*1.05;
+    let y=B-W*0.36-(h.lines.length-1)*lh;
+    h.lines.forEach(l=>{ ctx.fillText(l,W/2,y); y+=lh; });
+    shadowOff();
+    // vote cards
+    const gap=W*0.04, cw=(W*0.86-gap)/2, ch=W*0.155, top=B-W*0.33;
+    [[d.optA,d.reactA,GOLD,'#1a1400'],[d.optB,d.reactB,'#ffffff','#141a2b']].forEach(([opt,react,bg,ink],i)=>{
+      const x=W*0.07+i*(cw+gap);
+      ctx.fillStyle='rgba(255,255,255,.12)'; roundRect(x,top,cw,ch,20); ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,.28)'; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle='#fff'; fitFont(opt.toUpperCase(),'italic 900',44,cw-36); ctx.fillText(opt.toUpperCase(),x+cw/2,top+ch*0.42);
+      const label=react; setFont('800',26); const pw=Math.min(cw-40,ctx.measureText(label).width+50);
+      ctx.fillStyle=bg; roundRect(x+cw/2-pw/2,top+ch*0.56,pw,50,25); ctx.fill();
+      ctx.fillStyle=ink; fitFont(label,'800',26,pw-24); ctx.fillText(label,x+cw/2,top+ch*0.56+34);
+    });
   }
 };
 
