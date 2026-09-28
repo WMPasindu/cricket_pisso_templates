@@ -8,9 +8,9 @@ Open `index.html` in a browser, pick a post type, upload a photo, fill in the de
 
 **Match updates:** Match day (one main photo, or two side-by-side photos or flags), Toss result, Playing XI (captain and wicket-keeper menus), Wicket alert, Innings break (target, run rate and a chase poll with emojis), Last match result, Injury update
 
-**Stats and analysis:** Player figures, Player analysis, Key player battle (two player photos), Team stats battle, Ground analysis, Pitch report, Weather report
+**Stats and analysis:** Player figures, Player spotlight (stacked, two-column or side-by-side stats; drag the headline and stats anywhere), Player analysis, Key player battle (two player photos), Team stats battle, Ground analysis, Pitch report, Weather report
 
-**Fan posts:** Captain's call (bat or bowl poll), Toss prediction, Playing XI prediction, Meme
+**Fan posts:** Captain's call (bat or bowl poll), Toss prediction, Playing XI prediction, Meme, Custom post (free layout: add text, images and shapes, change fonts, sizes and colours, and drag everything anywhere)
 
 ## Features
 
