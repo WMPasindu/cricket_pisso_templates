@@ -87,6 +87,13 @@ input[type=color]{width:34px;height:34px;border:1px solid var(--line);border-rad
 .chkrow{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;cursor:pointer}
 .chkrow input{width:18px;height:18px;accent-color:var(--accent)}
 .thumb.chk{background-color:#fff;background-image:conic-gradient(#ccd 25%,#fff 0 50%,#ccd 0 75%,#fff 0);background-size:10px 10px}
+[hidden]{display:none!important}
+.frOpts{display:flex;flex-direction:column;gap:10px}
+.frColors{display:flex;gap:16px;flex-wrap:wrap}
+.frc{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer}
+.frPresets{display:flex;gap:8px;flex-wrap:wrap}
+.frPresets button{display:flex;align-items:center;gap:8px;padding:6px 12px 6px 6px}
+.frPresets i{width:24px;height:24px;border-radius:50%;display:block;border:1px solid var(--line)}
 #fallback{display:flex;flex-direction:column;gap:8px}
 #fallback img{border-radius:6px;border:1px solid var(--line)}
 </style>
@@ -191,6 +198,52 @@ input[type=color]{width:34px;height:34px;border:1px solid var(--line);border-rad
             <option value="1920">Story · 1080 × 1920</option>
           </select>
         </label>
+      </fieldset>
+
+      <div class="sep"></div>
+
+      <fieldset>
+        <legend>Frame</legend>
+        <label class="f">Frame design
+          <select id="frStyle">
+            <option value="none">No frame</option>
+            <option value="simple">Simple border</option>
+            <option value="rounded">Rounded border</option>
+            <option value="double">Double line</option>
+            <option value="dashed">Dashed</option>
+            <option value="stripes">Striped tape</option>
+            <option value="corners">Corner brackets</option>
+            <option value="sporty">Sporty corners</option>
+            <option value="bars">Top and bottom bars</option>
+            <option value="glow">Neon glow</option>
+          </select>
+        </label>
+        <div class="frOpts" id="frOpts">
+          <label class="f" id="frThickLab">Thickness <input type="range" id="frThick" min="6" max="80" step="1" value="24"></label>
+          <div class="row">
+            <label class="f">Colours
+              <select id="frMix">
+                <option value="1">One colour</option>
+                <option value="2">Mix 2 colours</option>
+                <option value="3">Mix 3 colours</option>
+              </select>
+            </label>
+            <label class="f" id="frDirLab">Blend direction
+              <select id="frDir">
+                <option value="diag">Diagonal</option>
+                <option value="lr">Left to right</option>
+                <option value="tb">Top to bottom</option>
+                <option value="radial">From the centre</option>
+              </select>
+            </label>
+          </div>
+          <div class="frColors">
+            <label class="frc"><input type="color" id="frC1" value="#f2c534"> Colour 1</label>
+            <label class="frc" id="frC2Lab"><input type="color" id="frC2" value="#ffffff"> Colour 2</label>
+            <label class="frc" id="frC3Lab"><input type="color" id="frC3" value="#1b3ea6"> Colour 3</label>
+          </div>
+          <div class="frPresets" id="frPresets" role="group" aria-label="Ready-made colour mixes"></div>
+        </div>
       </fieldset>
 
       <div class="actions">
@@ -614,6 +667,37 @@ function setColor(c){
   saveDraft(); draw();
 }
 
+/* ---------- frame ---------- */
+const frame={style:'none',thick:24,mix:'2',dir:'diag',c1:'#f2c534',c2:'#ffffff',c3:'#1b3ea6'};
+try{ const v=JSON.parse(localStorage.getItem('mcs-frame')||'null'); if(v) Object.keys(frame).forEach(k=>{ if(typeof v[k]===typeof frame[k]) frame[k]=v[k]; }); }catch(e){}
+function saveFrame(){ try{ localStorage.setItem('mcs-frame',JSON.stringify(frame)); }catch(e){} }
+const FR_PRESETS=[['Gold',['#f2c534','#b8860b']],['Silver',['#f4f6fa','#9aa3b5']],['Sri Lanka',['#8d153a','#ffbe29','#00534e']],['Royal',['#1b3ea6','#f2c534','#ffffff']],['Fire',['#ff3d00','#ffc400']],['Ocean',['#00c6ff','#0052d4']],['Sunset',['#ff5f6d','#ffc371']],['Neon',['#39ff14','#00e5ff','#ff00e5']]];
+function syncFrameUI(){
+  $('frStyle').value=frame.style; $('frThick').value=frame.thick; $('frMix').value=frame.mix; $('frDir').value=frame.dir;
+  $('frC1').value=frame.c1; $('frC2').value=frame.c2; $('frC3').value=frame.c3;
+  $('frOpts').hidden=frame.style==='none';
+  $('frC2Lab').hidden=frame.mix==='1'; $('frC3Lab').hidden=frame.mix!=='3'; $('frDirLab').hidden=frame.mix==='1';
+  $('frThickLab').firstChild.textContent='Thickness: '+frame.thick+' px ';
+}
+[['frStyle','style'],['frMix','mix'],['frDir','dir'],['frC1','c1'],['frC2','c2'],['frC3','c3']].forEach(([id,k])=>{
+  const h=e=>{ frame[k]=e.target.value; saveFrame(); syncFrameUI(); draw(); };
+  $(id).addEventListener('input',h); $(id).addEventListener('change',h);
+});
+$('frThick').addEventListener('input',e=>{ frame.thick=+e.target.value; saveFrame(); syncFrameUI(); draw(); });
+FR_PRESETS.forEach(([name,cols])=>{
+  const b=document.createElement('button'); b.type='button';
+  const dot=document.createElement('i');
+  dot.style.background = cols.length>1 ? 'linear-gradient(135deg,'+cols.join(',')+')' : cols[0];
+  b.append(dot,document.createTextNode(name));
+  b.addEventListener('click',()=>{
+    frame.c1=cols[0]; if(cols[1]) frame.c2=cols[1]; if(cols[2]) frame.c3=cols[2];
+    frame.mix=String(cols.length); if(frame.style==='none') frame.style='simple';
+    saveFrame(); syncFrameUI(); draw();
+  });
+  $('frPresets').appendChild(b);
+});
+syncFrameUI();
+
 /* ---------- images ---------- */
 function loadImage(file){
   return new Promise((res,rej)=>{
@@ -702,14 +786,15 @@ function logoRect(key){
     const w=ctx.measureText(pn).width, H=state.H;
     let cx,cy;
     if(p.x!=null){ cx=p.x*W; cy=p.y*H; }
-    else if(state.logoR && logoPos.logoR.x==null){ cx=W*0.045+w/2; cy=W*0.075-fs*0.35; }
-    else { cx=W*0.955-w/2; cy=H-W*0.03-fs*0.35; }
+    else if(state.logoR && logoPos.logoR.x==null){ const fi=frameInset(); cx=W*0.045+w/2+fi; cy=W*0.075-fs*0.35+fi; }
+    else { const fi=frameInset(); cx=W*0.955-w/2-fi; cy=H-W*0.03-fs*0.35-frameLift(); }
     return {cx,cy,w,h:fs+14,fs,text:pn};
   }
   const img=state[key]; if(!img) return null;
   const H=state.H, p=logoPos[key];
-  const cx = p.x!=null ? p.x*W : (key==='logoL'?0.1:0.9)*W;
-  const cy = p.y!=null ? p.y*H : H-W*0.072;
+  const fi=frameInset();
+  const cx = p.x!=null ? p.x*W : (key==='logoL'?0.1*W+fi:0.9*W-fi);
+  const cy = p.y!=null ? p.y*H : H-W*0.072-(key==='logoR'?frameLift():fi);
   const box=p.size*W, s=Math.min(box/img.width,box/img.height);
   return {cx,cy,w:img.width*s,h:img.height*s};
 }
@@ -902,6 +987,89 @@ function wrapFit(text,weight,size,maxW,maxLines){
 function drawLogo(img,cx,cy,box){
   const s=Math.min(box/img.width,box/img.height);
   ctx.drawImage(img,cx-img.width*s/2,cy-img.height*s/2,img.width*s,img.height*s);
+}
+function rrPath(x,y,w,h,r){
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+function framePaint(H){
+  const cols=[frame.c1,frame.c2,frame.c3].slice(0,+frame.mix||1);
+  if(cols.length===1) return cols[0];
+  let g;
+  if(frame.dir==='lr') g=ctx.createLinearGradient(0,0,W,0);
+  else if(frame.dir==='tb') g=ctx.createLinearGradient(0,0,0,H);
+  else if(frame.dir==='radial') g=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.hypot(W,H)/2);
+  else g=ctx.createLinearGradient(0,0,W,H);
+  cols.forEach((c,i)=>g.addColorStop(i/(cols.length-1),c));
+  return g;
+}
+function frameInset(){
+  const t=frame.thick;
+  switch(frame.style){
+    case 'simple': case 'rounded': case 'stripes': return t+6;
+    case 'double': return t+t*0.7+8+Math.max(3,t*0.22)+6;
+    case 'dashed': return t*0.6+10+Math.max(4,t*0.45)+6;
+    case 'corners': return Math.max(18,t*0.8)+t+6;
+    case 'sporty': return 60;
+    case 'bars': return t*2.4+6;
+    case 'glow': return t*0.8+22;
+    default: return 0;
+  }
+}
+function frameLift(){ return frame.style==='sporty' ? (W*0.18+frame.thick*2)*0.62 : frameInset(); }
+function drawFrame(H){
+  const st=frame.style; if(st==='none') return;
+  const t=frame.thick, paint=framePaint(H), cols=[frame.c1,frame.c2,frame.c3].slice(0,+frame.mix||1);
+  ctx.save(); shadowOff();
+  const band=(inset,r)=>{ ctx.beginPath(); ctx.rect(0,0,W,H); if(r) rrPath(inset,inset,W-2*inset,H-2*inset,r); else ctx.rect(inset,inset,W-2*inset,H-2*inset); };
+  if(st==='simple'){ ctx.fillStyle=paint; band(t); ctx.fill('evenodd'); }
+  else if(st==='rounded'){ ctx.fillStyle=paint; band(t,Math.max(28,t*2)); ctx.fill('evenodd'); }
+  else if(st==='double'){
+    ctx.fillStyle=paint; band(t); ctx.fill('evenodd');
+    const g=t*0.7+8, lw=Math.max(3,t*0.22);
+    ctx.strokeStyle=paint; ctx.lineWidth=lw; ctx.strokeRect(t+g,t+g,W-2*(t+g),H-2*(t+g));
+  }
+  else if(st==='dashed'){
+    const m=t*0.6+10; ctx.strokeStyle=paint; ctx.lineWidth=Math.max(4,t*0.45);
+    ctx.setLineDash([t*1.6+12,t*0.9+8]); ctx.strokeRect(m,m,W-2*m,H-2*m);
+  }
+  else if(st==='stripes'){
+    band(t); ctx.clip('evenodd');
+    const sw=Math.max(12,t*0.7), sc=cols.length>1?cols:[frame.c1,'#111111']; let i=0;
+    for(let x=-H; x<W+H; x+=sw){
+      ctx.fillStyle=sc[i%sc.length]; ctx.beginPath();
+      ctx.moveTo(x,0); ctx.lineTo(x+sw,0); ctx.lineTo(x+sw-H,H); ctx.lineTo(x-H,H); ctx.closePath(); ctx.fill(); i++;
+    }
+  }
+  else if(st==='corners'){
+    const m=Math.max(18,t*0.8), L=W*0.16; ctx.fillStyle=paint;
+    [[m,m,1,1],[W-m,m,-1,1],[m,H-m,1,-1],[W-m,H-m,-1,-1]].forEach(([x,y,sx,sy])=>{
+      ctx.fillRect(Math.min(x,x+sx*L),Math.min(y,y+sy*t),L,t);
+      ctx.fillRect(Math.min(x,x+sx*t),Math.min(y,y+sy*L),t,L);
+    });
+  }
+  else if(st==='sporty'){
+    const S=W*0.18+t*2, o=t*0.8+12; ctx.fillStyle=paint;
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(S,0); ctx.lineTo(0,S); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(W,H); ctx.lineTo(W-S,H); ctx.lineTo(W,H-S); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle=paint; ctx.lineWidth=Math.max(3,t*0.22);
+    ctx.beginPath(); ctx.moveTo(S+o,0); ctx.lineTo(0,S+o); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(W-S-o,H); ctx.lineTo(W,H-S-o); ctx.stroke();
+    const lw=Math.max(4,t*0.3); ctx.lineWidth=lw; ctx.strokeRect(lw/2,lw/2,W-lw,H-lw);
+  }
+  else if(st==='bars'){
+    const h=t, T=t*2.4, cut=W*0.42; ctx.fillStyle=paint;
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(W,0); ctx.lineTo(W,h); ctx.lineTo(cut+T,h); ctx.lineTo(cut,T); ctx.lineTo(0,T); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(W,H); ctx.lineTo(0,H); ctx.lineTo(0,H-h); ctx.lineTo(W-cut-T,H-h); ctx.lineTo(W-cut,H-T); ctx.lineTo(W,H-T); ctx.closePath(); ctx.fill();
+  }
+  else if(st==='glow'){
+    const m=t*0.8+14, r=36, lw=Math.max(4,t*0.18);
+    ctx.strokeStyle=paint; ctx.lineWidth=lw; ctx.shadowColor=frame.c1; ctx.shadowBlur=t*1.2+10;
+    for(let i=0;i<2;i++){ ctx.beginPath(); rrPath(m,m,W-2*m,H-2*m,r); ctx.stroke(); }
+    ctx.shadowBlur=0; ctx.strokeStyle='rgba(255,255,255,.85)'; ctx.lineWidth=Math.max(1.5,lw*0.35);
+    ctx.beginPath(); rrPath(m,m,W-2*m,H-2*m,r); ctx.stroke();
+  }
+  ctx.restore();
 }
 function roundRect(x,y,w,h,r){
   ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
@@ -1419,10 +1587,12 @@ function draw(){
   if(!t.noFooter){
     ctx.fillStyle='rgba(255,255,255,.95)';
     const f1=(d.fixture||'').toUpperCase(), f2=(d.details||'').toUpperCase();
-    let sp=spacedFit(f1,'700',25,11,W*0.6); spacedText(f1,W/2,B-W*0.083,sp,'center');
-    sp=spacedFit(f2,'600',21,3.5,W*0.6); spacedText(f2,W/2,B-W*0.049,sp,'center');
+    const fu=Math.min(Math.max(0,frameInset()-38),24);
+    let sp=spacedFit(f1,'700',25,11,W*0.6); spacedText(f1,W/2,B-W*0.083-fu,sp,'center');
+    sp=spacedFit(f2,'600',21,3.5,W*0.6); spacedText(f2,W/2,B-W*0.049-fu,sp,'center');
   }
 
+  drawFrame(H);
   const logoBox=W*0.105, logoY=B-W*0.072;
   ['logoL','logoR'].forEach(k=>{
     const r=logoRect(k); if(!r) return;

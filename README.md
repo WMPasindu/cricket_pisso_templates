@@ -18,4 +18,5 @@ Open `index.html` in a browser, pick a post type, upload a photo, fill in the de
 - Drag to position the photo, both logos and the page name
 - Remove the plain background from a logo
 - Team colour picker
+- Frames: 9 designs, one colour or a blend of two or three, with ready-made colour mixes
 - Text, logos and positions are remembered in the browser
